@@ -1,18 +1,14 @@
 defmodule Hormex do
-  @moduledoc """
-  Documentation for Hormex.
-  """
+  alias Hormex.Listener
+  require Logger
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Hormex.hello
-      :world
-
+  Start the TCP listener on the given port.
   """
-  def hello do
-    :world
+  def listen(port) do
+    options = [:binary, packet: :http, active: false]
+    {:ok, socket} = :gen_tcp.listen(port, options)
+    Logger.info "Listening on port #{port}"
+    Listener.accept_forever(socket)
   end
 end

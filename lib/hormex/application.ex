@@ -8,9 +8,8 @@ defmodule Hormex.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      # Starts a worker by calling: Hormex.Worker.start_link(arg)
-      # {Hormex.Worker, arg},
-      Supervisor.child_spec({Task, fn -> Hormex.Listener.listen(4040) end}, restart: :permanent)
+      {Task.Supervisor, name: Hormex.HandlerSupervisor},
+      Supervisor.child_spec({Task, fn -> Hormex.listen(4040) end}, restart: :permanent)
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
