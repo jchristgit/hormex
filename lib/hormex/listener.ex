@@ -20,9 +20,7 @@ defmodule Hormex.Listener do
         Handler.handle_request(client, packets)
 
       {:ok, {:http_error, bad_line}} ->
-        Handler.respond(client, 400,
-          "<h1>Bad Request</h1><p>Invalid HTTP line #{bad_line}</p>"
-        )
+        Handler.respond(client, 400, "<h1>Bad Request</h1><p>Invalid HTTP line #{bad_line}</p>")
 
       _ ->
         serve(client, packets ++ [next_line])

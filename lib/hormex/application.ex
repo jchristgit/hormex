@@ -9,11 +9,11 @@ defmodule Hormex.Application do
     ]
 
     opts = [strategy: :one_for_one, name: Hormex.Supervisor]
-    Logger.info "Starting up main supervisor."
+    Logger.info("Starting up main supervisor.")
     Supervisor.start_link(children, opts)
   end
 
   def stop(_state) do
-    Logger.info "Stopping main supervisor."
+    Logger.info("Stopping main supervisor.")
   end
 end

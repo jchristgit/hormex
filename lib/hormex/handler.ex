@@ -9,22 +9,25 @@ defmodule Hormex.Handler do
   def handle_request(client, packets) do
     case packets do
       [{:ok, {:http_request, method, {:abs_path, path}, {major, minor}}} | _rest] ->
-        Logger.debug "#{method} #{path} HTTP/#{major}.#{minor}"
+        Logger.debug("#{method} #{path} HTTP/#{major}.#{minor}")
         respond(client, 200, "<h1>OK</h1>")
+
       _ ->
-        Logger.debug "Invalid request"
+        Logger.debug("Invalid request")
         respond(client, 400, "<h1>Bad Request</h1>")
     end
   end
 
   def respond(client, status, body) do
-    Logger.debug "Responding with status #{status}"
+    Logger.debug("Responding with status #{status}")
+
     response = """
     HTTP/1.1 #{status} #{@status_names[status]}
     Content-Type: text/html
     Content-Length: #{String.length(body)}\r\n\r
     #{body}
     """
+
     :gen_tcp.send(client, response)
   end
 end
