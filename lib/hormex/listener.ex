@@ -1,23 +1,25 @@
 defmodule Hormex.Listener do
+  alias Hormex.Handler
+
   def accept_forever(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
-    {:ok, pid} = Task.Supervisor.start_child(Hormex.HandlerSupervisor, fn -> serve(client) end)
+    {:ok, _pid} = Task.Supervisor.start_child(Hormex.HandlerSupervisor, fn -> serve(client) end)
     # :ok = :gen_tcp.controlling_process(client, pid)
     accept_forever(socket)
   end
 
-  defp serve(client, request \\ []) do
-    IO.inspect request
+  defp serve(client, packets \\ []) do
     next_line = :gen_tcp.recv(client, 0)
+
     case next_line do
       {:ok, :http_eoh} ->
-        :gen_tcp.send(client, "HTTP/1.0 200 OK\nContent-Type: text/html\nContent-Length: 5\n\nhello")
-        :gen_tcp.close(client)
+        Handler.handle_request(client, packets)
+
       {:error, :closed} ->
-        :gen_tcp.send(client, "HTTP/1.0 200 OK\nContent-Type: text/html\nContent-Length: 5\n\nhello")
-        :gen_tcp.close(client)
+        Handler.handle_request(client, packets)
+
       _ ->
-        serve(client, request ++ [next_line])
+        serve(client, packets ++ [next_line])
     end
   end
 end
