@@ -1,10 +1,11 @@
 defmodule Hormex.Listener do
   alias Hormex.Handler
+  require Logger
 
   def accept_forever(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
-    {:ok, _pid} = Task.Supervisor.start_child(Hormex.HandlerSupervisor, fn -> serve(client) end)
-    # :ok = :gen_tcp.controlling_process(client, pid)
+    {:ok, pid} = Task.Supervisor.start_child(Hormex.HandlerSupervisor, fn -> serve(client) end)
+    :ok = :gen_tcp.controlling_process(client, pid)
     accept_forever(socket)
   end
 
@@ -17,6 +18,11 @@ defmodule Hormex.Listener do
 
       {:error, :closed} ->
         Handler.handle_request(client, packets)
+
+      {:ok, {:http_error, bad_line}} ->
+        Handler.respond(client, 400,
+          "<h1>Bad Request</h1><p>Invalid HTTP line #{bad_line}</p>"
+        )
 
       _ ->
         serve(client, packets ++ [next_line])
