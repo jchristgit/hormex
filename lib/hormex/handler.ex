@@ -24,7 +24,7 @@ defmodule Hormex.Handler do
     response = """
     HTTP/1.1 #{status} #{@status_names[status]}
     Content-Type: text/html
-    Content-Length: #{String.length(body)}\r\n\r
+    Content-Length: #{byte_size(body) + 1}\r\n\r
     #{body}
     """
 
