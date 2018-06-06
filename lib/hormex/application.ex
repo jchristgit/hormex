@@ -5,6 +5,7 @@ defmodule Hormex.Application do
   def start(_type, _args) do
     children = [
       {Task.Supervisor, name: Hormex.HandlerSupervisor},
+      {Hormex.Router, name: Hormex.Router},
       Supervisor.child_spec({Task, fn -> Hormex.listen(4040) end}, restart: :permanent)
     ]
 

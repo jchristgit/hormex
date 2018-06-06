@@ -17,7 +17,11 @@ defmodule Hormex.Listener do
         Handler.handle_request(client, packets)
 
       {:error, :closed} ->
-        Handler.respond(client, 400, "<h1>Bad Request</h1><p>Connection was closed unexpectedly</p>")
+        Handler.respond(
+          client,
+          400,
+          "<h1>Bad Request</h1><p>Connection was closed unexpectedly</p>"
+        )
 
       {:ok, {:http_error, bad_line}} ->
         Handler.respond(client, 400, "<h1>Bad Request</h1><p>Invalid HTTP line #{bad_line}</p>")
@@ -25,6 +29,7 @@ defmodule Hormex.Listener do
       _ ->
         serve(client, packets ++ [next_line])
     end
+
     :gen_tcp.shutdown(client, :write)
   end
 end
