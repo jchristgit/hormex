@@ -1,24 +1,41 @@
 defmodule Hormex.Router do
-  use Agent
+  use GenServer
 
-  @routes %{
-    "/" => %{
-      :location => "./example"
-    }
-  }
+  ## Client API
 
   def start_link(opts) do
-    Agent.start_link(fn -> @routes end, opts)
+    GenServer.start_link(__MODULE__, :ok, opts)
   end
 
-  def route_for(router \\ __MODULE__, path) do
+  def add_route(server, path, options) do
+    GenServer.cast(server, {:add, path, options})
+  end
+
+  def route_for(server, path) do
+    GenServer.call(server, {:lookup, path})
+  end
+
+  ## Server Callbacks
+
+  @impl true
+  def init(:ok) do
+    {:ok, %{}}
+  end
+
+  @impl true
+  def handle_call({:lookup, path}, _from, routes) do
     route =
-      Agent.get(router, &Map.keys(&1))
+      Map.keys(routes)
       |> Enum.find(&String.starts_with?(path, &1))
 
-    case Agent.get(router, &Map.get(&1, route)) do
-      nil -> {:err, "no route for path #{path}"}
-      match -> {:ok, {route, match}}
+    case Map.get(routes, route) do
+      nil -> {:reply, {:error, "no matching route found"}, routes}
+      match -> {:reply, {:ok, {route, match}}, routes}
     end
+  end
+
+  @impl true
+  def handle_cast({:add, path, options}, routes) do
+    {:noreply, Map.put(routes, path, options)}
   end
 end
