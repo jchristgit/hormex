@@ -4,8 +4,7 @@ defmodule Hormex.Listener do
 
   def accept_forever(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
-    {:ok, pid} = Task.Supervisor.start_child(Hormex.HandlerSupervisor, fn -> serve(client) end)
-    :ok = :gen_tcp.controlling_process(client, pid)
+    {:ok, _pid} = Task.Supervisor.start_child(Hormex.HandlerSupervisor, fn -> serve(client) end)
     accept_forever(socket)
   end
 

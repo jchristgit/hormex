@@ -21,7 +21,8 @@ defmodule Hormex.Handler do
   end
 
   defp respond_with_file(client, _method, path) do
-    path_string = to_string path
+    path_string = to_string(path)
+
     with {:ok, {route_path, options}} <- Router.route_for(Router, path_string),
          file_path <- String.trim_leading(path_string, route_path),
          {:ok, contents} <- File.read("#{options[:location]}/#{file_path}") do
