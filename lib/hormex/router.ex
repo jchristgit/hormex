@@ -112,16 +112,19 @@ defmodule Hormex.Router do
 
   ## Server Callbacks
 
+  @doc false
   @impl true
   def init(:ok) do
     {:ok, %{}}
   end
 
+  @doc false
   @impl true
   def handle_call(:fetchall, _from, routes) do
     {:reply, routes, routes}
   end
 
+  @doc false
   @impl true
   def handle_call({:lookup, path}, _from, routes) do
     route =
@@ -134,6 +137,7 @@ defmodule Hormex.Router do
     end
   end
 
+  @doc false
   @impl true
   def handle_cast({:add, path, options}, routes) do
     {:noreply, Map.put(routes, path, options)}
