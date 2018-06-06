@@ -22,7 +22,7 @@ defmodule Hormex.Handler do
 
   defp respond_with_file(client, _method, path) do
     path_string = to_string path
-    with {:ok, {route_path, options}} <- Router.route_for(path_string),
+    with {:ok, {route_path, options}} <- Router.route_for(Router, path_string),
          file_path <- String.trim_leading(path_string, route_path),
          {:ok, contents} <- File.read("#{options[:location]}/#{file_path}") do
       respond(client, 200, contents)
@@ -41,7 +41,7 @@ defmodule Hormex.Handler do
 
     response = """
     HTTP/1.1 #{status} #{@status_names[status]}
-    Content-Type: text/html
+    Content-Type: #{content_type}
     Content-Length: #{byte_size(body) + 1}\r\n\r
     #{body}
     """
