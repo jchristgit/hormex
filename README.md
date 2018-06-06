@@ -6,7 +6,7 @@ A simple HTTP server written in Elixir.
 - [ ] Filetype detection
 - [ ] Good test coverage
 - [ ] Custom configuration
-- [ ] Live route changing
+- [ ] Live route changing - partially implemented, see `Hormex.Router`
 - [ ] Correct handling of request headers
 
 ## Running
