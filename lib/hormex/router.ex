@@ -11,6 +11,10 @@ defmodule Hormex.Router do
     GenServer.cast(server, {:add, path, options})
   end
 
+  def all_routes(server) do
+    GenServer.call(server, :fetchall)
+  end
+
   def route_for(server, path) do
     GenServer.call(server, {:lookup, path})
   end
@@ -20,6 +24,11 @@ defmodule Hormex.Router do
   @impl true
   def init(:ok) do
     {:ok, %{}}
+  end
+
+  @impl true
+  def handle_call(:fetchall, _from, routes) do
+    {:reply, routes, routes}
   end
 
   @impl true
